@@ -1,0 +1,99 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+
+  margin: 0 auto;
+}
+
+
+.title{
+  align-self: center;
+ 
+  text-transform:uppercase;
+  font-size:26px; letter-spacing:1px;
+}
+
+.inputDiv{
+  display: flex;
+  gap: 10px;
+  align-self: center;
+}
+
+.inputName{
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+.listQueens{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  align-self: center;
+}
+
+.queen{
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  align-self: center;
+}
+
+.queen img {
+  width: 25%;
+  height: 25%;
+  object-fit: cover;
+  display: block;
+}
+.queen p{
+  width: 50%;
+  height: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.buttonCreate {
+  background-color: green;
+  border: none;
+  color: white;
+  padding: 5px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.buttonDelete {
+  color: red;
+  border-color: red;
+  border-width: 1px;
+  padding-inline: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.buttonPaginate {
+    display: inline-block;
+    padding: 5px 5px;
+    background-color: rgb(179, 23, 145);
+    color: white;
+    text-decoration: none;
+    border: 1px solid rgb(179, 23, 145);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.buttonPaginate:hover {
+    background-color: rgb(90, 11, 73);
+    border: 1px solid rgb(90, 11, 73);
+}
+
+.buttonPaginate:active {
+    transform: scale(0.95);
+}
