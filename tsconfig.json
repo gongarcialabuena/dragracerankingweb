@@ -36,7 +36,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     ".next/dev/dev/types/**/*.ts"
-, "lib/supabase/client.js"  ],
+, "lib/supabase/client.js", "app/layout.tsx.old"  ],
   "exclude": [
     "node_modules"
   ]

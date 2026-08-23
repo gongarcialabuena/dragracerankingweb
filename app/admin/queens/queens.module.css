@@ -1,0 +1,156 @@
+.queensList {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.queen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 15px;
+
+    border: 1px solid #ddd;
+    border-radius: 10px;
+
+    background: white;
+    cursor: pointer;
+
+    text-align: center;
+
+    transition:
+        background-color 0.15s,
+        border-color 0.15s,
+        transform 0.15s;
+}
+
+.queen:hover {
+    background-color: #f5f5f5;
+    border-color: #bbb;
+    transform: translateY(-2px);
+}
+
+.queen img {
+    width: 100px;
+    height: 100px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.queen span {
+    font-weight: 600;
+}
+
+.queen small {
+    margin-top: 5px;
+    color: #777;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 1000px) {
+    .queensList {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .queensList {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 450px) {
+    .queensList {
+        grid-template-columns: 1fr;
+    }
+}
+
+.loading,
+.empty {
+    padding: 20px;
+    text-align: center;
+    color: #777;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+
+    margin-top: 20px;
+}
+
+.pagination button {
+    width: 35px;
+    height: 35px;
+
+    border: 1px solid #ccc;
+    border-radius: 6px;
+
+    background: white;
+    cursor: pointer;
+
+    font-size: 18px;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+.pagination button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.pagination span {
+    min-width: 120px;
+    text-align: center;
+}
+
+/* CABECERA */
+
+.queensHeader {
+    grid-column: 1 / -1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 0.25rem;
+}
+
+.queensHeader h4 {
+    margin: 0;
+}
+
+/* BOTÓN AÑADIR */
+
+.addQueen {
+    padding: 0.6rem 1rem;
+
+    border: 1px solid #ccc;
+    border-radius: 8px;
+
+    background-color: white;
+    color: #222;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s,
+        border-color 0.15s;
+}
+
+.addQueen:hover {
+    background-color: #f5f5f5;
+    border-color: #999;
+}

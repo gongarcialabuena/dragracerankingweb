@@ -1,0 +1,111 @@
+.header {
+    width: 100%;
+    height: 64px;
+    border-bottom: 1px solid #ddd;
+    background-color: white;
+}
+
+.container {
+    max-width: 1400px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+}
+
+.logo:hover {
+    color: rgb(14, 14, 177);
+    transition: color 0.2s;
+}
+
+.nav {
+    display: flex;
+    gap: 30px;
+}
+
+.nav a {
+    text-decoration: none;
+    color: #333;
+}
+
+.auth {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.auth a {
+    text-decoration: none;
+    color: #333;
+}
+
+.buttonHeader {
+    padding: 8px 14px;
+    border-radius: 6px;
+    background-color: rgb(14, 14, 177);
+    color: white !important;
+}
+
+.buttonHeader:hover {
+    background-color: rgb(116, 116, 216);
+    transition: background-color 0.2s;
+}
+
+.register {
+    padding: 8px 14px;
+    border-radius: 6px;
+    background-color: rgb(14, 14, 177);
+    color: white !important;
+}
+
+.register:hover {
+    background-color: rgb(116, 116, 216);
+    transition: background-color 0.2s;
+}
+
+.login {
+    padding: 8px 14px;
+    border-radius: 6px;
+    background-color: rgb(97, 97, 228);
+    color: white !important;
+}
+
+.login:hover {
+    background-color: rgb(116, 116, 216);
+    transition: background-color 0.2s;
+}
+
+
+.cerrarSesion {
+    padding: 8px 14px;
+    border-radius: 6px;
+    background-color: rgb(97, 97, 228);
+    color: white !important;
+}
+
+.cerrarSesion:hover {
+    background-color: rgb(116, 116, 216);
+    transition: background-color 0.2s;
+}
+
+.profile {
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;   
+}
+
+.profile:hover {
+    color: rgb(14, 14, 177);
+    transition: color 0.2s;
+}

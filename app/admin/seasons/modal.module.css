@@ -1,0 +1,87 @@
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(0, 0, 0, 0.45);
+
+    z-index: 1000;
+}
+
+.modal {
+    width: 90%;
+    max-width: 450px;
+
+    padding: 1.5rem;
+
+    background-color: white;
+    border-radius: 10px;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.formGroup label {
+    font-weight: 600;
+}
+
+.formGroup input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 0.7rem 0.8rem;
+
+    border: 1px solid #ccc;
+    border-radius: 6px;
+
+    font-size: 1rem;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border-color: #777;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+
+    margin-top: 1.5rem;
+}
+
+.modalActions button {
+    padding: 0.6rem 1rem;
+
+    border: none;
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+.modalActions button[type='button'] {
+    background-color: #eee;
+}
+
+.modalActions button[type='submit'] {
+    background-color: #222;
+    color: white;
+}
+
+.modalActions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

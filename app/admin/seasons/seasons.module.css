@@ -1,0 +1,212 @@
+.container {
+    width: 100%;
+}
+
+/* SELECTOR */
+
+.selector {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 1.5rem;
+}
+
+.selectorButton {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    padding: 0.8rem 1rem;
+
+    border: 1px solid #ccc;
+    border-radius: 8px;
+
+    background-color: white;
+    color: #222;
+
+    font-size: 1rem;
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.selectorButton:hover {
+    border-color: #999;
+}
+
+.caret {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.caretOpen {
+    transform: rotate(180deg);
+}
+
+/* DROPDOWN */
+
+.dropdown {
+    position: absolute;
+
+    top: calc(100% + 0.4rem);
+    left: 0;
+    right: 0;
+
+    max-height: 350px;
+    overflow-y: auto;
+
+    padding: 0.35rem;
+
+    background-color: white;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+
+    z-index: 100;
+}
+
+.dropdownItem {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    padding: 0.7rem 0.8rem;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: background-color 0.15s;
+}
+
+.dropdownItem:hover {
+    background-color: #f2f2f2;
+}
+
+.dropdownItem.selected {
+    background-color: #e9e9e9;
+    font-weight: 600;
+}
+
+/* TEMPORADA */
+
+.seasonContent {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 2rem;
+}
+
+.seasonHeader {
+    margin-bottom: 1.5rem;
+}
+
+.seasonHeader h3 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.seasonHeader p {
+    margin: 0.3rem 0 0;
+    color: #777;
+}
+
+/* EPISODIOS */
+
+.episodes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+}
+
+/* CABECERA */
+
+.episodesHeader {
+    grid-column: 1 / -1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 0.25rem;
+}
+
+.episodesHeader h4 {
+    margin: 0;
+}
+
+/* BOTÓN AÑADIR */
+
+.addEpisode {
+    padding: 0.6rem 1rem;
+
+    border: 1px solid #ccc;
+    border-radius: 8px;
+
+    background-color: white;
+    color: #222;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s,
+        border-color 0.15s;
+}
+
+.addEpisode:hover {
+    background-color: #f5f5f5;
+    border-color: #999;
+}
+
+/* EPISODIO */
+
+.episode {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    width: 100%;
+
+    padding: 0.8rem 1rem;
+
+    border: 1px solid #eee;
+    border-radius: 8px;
+
+    background: white;
+    color: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s,
+        border-color 0.15s;
+}
+
+.episode:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+.episodeNumber {
+    width: 30px;
+
+    font-weight: 600;
+    color: #777;
+}

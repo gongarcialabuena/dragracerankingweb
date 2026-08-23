@@ -1,11 +1,19 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase/server'
-
+import { getAuthenticatedUser } from '@/lib/supabase/auth'
 
 export async function POST(request) {
+    const { supabase, user, error: authError } = await getAuthenticatedUser()
+
+    if (!user) {
+        return Response.json(
+            { error: authError.message },
+            { status: 401 }
+        )
+    }
+
     const body = await request.json()
 
-    const { data, error } = await supabaseAdmin
+    const { data, error: dbError } = await supabase
         .from('participate')
         .insert({
             queen_id: body.queenId,
@@ -14,9 +22,9 @@ export async function POST(request) {
         })
         .select() // Devuelve el dato insertado
 
-    if (error) {
+    if (dbError) {
         return NextResponse.json(
-            { error: error.message },
+            { error: dbError.message },
             { status: 500 }
         )
     }
@@ -27,13 +35,22 @@ export async function POST(request) {
 }
 
 export async function GET() {
-    const { data, error } = await supabaseAdmin
+    const { supabase, user, error: authError } = await getAuthenticatedUser()
+
+    if (!user) {
+        return Response.json(
+            { error: authError.message },
+            { status: 401 }
+        )
+    }
+
+    const { data, error: dbError } = await supabase
         .from('participate')
         .select('*')
     
-    if (error) {
+    if (dbError) {
         return NextResponse.json(
-            { error: error.message },
+            { error: dbError.message },
             { status: 500 }
         )
     }
@@ -45,15 +62,24 @@ export async function GET() {
 //Si solo tiene 1 participacion devuelve false y no elimina ninguna participación, le tocara eliminarse
 //con la funcion de QueenAPI
 export async function DELETE(request) {
+    const { supabase, user, error: authError } = await getAuthenticatedUser()
+
+    if (!user) {
+        return Response.json(
+            { error: authError.message },
+            { status: 401 }
+        )
+    }
+    
     const body = await request.json()
 
-    const { count } = await supabaseAdmin
+    const { count } = await supabase
         .from("participate")
         .select("*", { count: "exact", head: true })
         .eq("queen_id", body.queenId);
 
     if (count > 1) {
-        await supabaseAdmin
+        await supabase
             .from("participate")
             .delete()
             .eq("queen_id", body.queenId)

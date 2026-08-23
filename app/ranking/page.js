@@ -1,379 +1,299 @@
 'use client'
 
 import styles from './page.module.css'
-import Link from 'next/link'
-import { useEffect, useState, useMemo, useRef } from 'react'
-import {useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
-import Dropdown from "../../lib/utils/dropdownSeason";
-import DropdownCell from "../../lib/utils/dropdownCell";
-import { hookSeason } from '../../lib/hooks/hookSeason'
-import { hookQueens } from '../../lib/hooks/hookQueens'
-import { pointTypeService } from '../../lib/services/pointTypeService';
-import { ppeService } from '../../lib/services/ppeService';
+import { useEffect, useState } from 'react'
+import { FaCaretDown } from 'react-icons/fa'
+import { seasonService } from '@/lib/services/seasonService'
+import { pointTypeService } from '@/lib/services/pointTypeService'
+import { queenService } from '@/lib/services/queenService'
+import { ppeService } from '@/lib/services/ppeService'
+import RankingCell from './RankingCell'
 
 export default function RankingPage() {
-    const CLIENT_ID = "a6e3d2d2-f709-45b1-8d43-6a2d2f660170"; // CAMBIAR ID ESTATICO
-    const seasonHook = hookSeason();
-    const queensHook = hookQueens();
-    const tableRef = useRef(null);
-    const [seasonSelected, setSeasonSelected] = useState({
-            id: null,
-            name: "Select season",
-            franchise: null,
-            year: null
-    });
-
-    const [activeCell, setActiveCell] = useState(null);
-    const [error, setError] = useState(null)
-    const [loading, setLoading] = useState(false)
+    const [seasonsMap, setSeasonsMap] = useState(new Map())
+    const [selectedSeason, setSelectedSeason] = useState(null)
+    const [dropdownOpen, setDropdownOpen] = useState(false)
+    const [episodes, setEpisodes] = useState([])
     const [pointTypes, setPointTypes] = useState([])
-    const [pointsMap, setPointsMap] = useState(new Map());
-    const [originalPointsMap, setOriginalPointsMap] = useState(new Map());
+    const [activeCell, setActiveCell] = useState(null)
+    const [pointsMap, setPointsMap] = useState(new Map())
+    const [queens, setQueens] = useState([])
+    const [loading, setLoading] = useState(true)
 
-    const finalPts = useMemo(() => {
-        const totals = new Map();
-        const episodes = new Map();
+    const fetchSeasons = async () => {
+        const map = await seasonService.getRankableSeasonsWithEpisodes()
+        setSeasonsMap(map)
+    }
 
-        pointsMap.forEach((point, key) => {
-            const [queenId, episodeId] = key.split("|");
-            const episodioFinal = seasonHook.episodes[seasonHook.episodes.length - 1].id;
-            if(point.label !== "N/A" && point.label !== "WINNER" && episodioFinal && episodioFinal !== episodeId){
-                totals.set(
-                    queenId,
-                    (totals.get(queenId) || 0) + point.value
-                );
+    const fetchPointTypes = async () => {
+        const types = await pointTypeService.getPointTypes()
+        setPointTypes(types)
+    }
 
-                episodes.set(
-                    queenId,
-                    (episodes.get(queenId) || 0) + 1
-                );
-            }
-        });
+    const fetchQueens = async (season) => {
+        const data = await queenService.listQueens(season, null)
+        setQueens(data.data)
+    }
 
-        totals.forEach((total, queenId) => {
-            totals.set(queenId, Math.round((total / episodes.get(queenId)) * 1000) / 1000);
-        });
+    const fetchPPE = async (season) => {
+        const ppe = await ppeService.getRanking(season)
 
-        return totals;
-    }, [pointsMap]);
+        const map = new Map()
 
-    const [rowsRanking, setRowsRanking] = useState([])
+        ppe.forEach(item => {
+            const queenId = item.ppe_reference.queen_id.id
+            const episodeId = item.ppe_reference.episode_id.id
 
-    const data = useMemo(() => {
-        return queensHook.queens
-            .map(q => ({
-                id: q.queen.id,
-                image_url: q.image_url,
-                name: q.queen.name,
-                puntuacion: finalPts.get(q.queen.id) || 0
-            }))
-            .sort((a, b) => b.puntuacion - a.puntuacion);
-    }, [queensHook.queens, finalPts]);
+            const key = `${queenId}|${episodeId}`
 
-    const columns = useMemo(() => [
-        {
-            accessorKey: "name",
-            header: () => (
-                <div className={styles.queenHeader}>
-                    <span></span>
-                    <span>Pts</span>
-                </div>
-            ),
-            cell: ({ row }) => (
-                <div className={styles.queenCell}>
-                    <img
-                        src={row.original.image_url}
-                        alt={row.original.name}
-                        className={styles.queenImage}
-                        draggable={false}
-                    />
-
-                    <span className={styles.queenName}>
-                        {row.original.name}
-                    </span>
-
-                    <span className={styles.queenScore}>
-                        {row.original.puntuacion}
-                    </span>
-                </div>
+            const pointType = pointTypes.find(
+                type => type.id === item.point_type_id.id
             )
-        },
 
-        ...seasonHook.episodes.map((episode) => ({
-            id: `episode-${episode.id}`,
-            header: episode.title,
-            accessorFn: (row) => row.episodes?.[episode.id] ?? "",
-            cell: ({ row }) => {
-                const key = `${row.original.id}|${episode.id}`;
-                return (
-                    <DropdownCell 
-                        id={{queenRowId: row.original.id, episodeId: episode.id}}
-                        point={pointsMap.get(key)}
-                        setPoint={(point) => {
-                            setPointsMap(prev => {
-                                const copy = new Map(prev);
-                                if (!point.id) {
-                                    copy.delete(key);
-                                } else {
-                                    copy.set(key, point);
-                                }
-                                return copy;
-                            });
-                        }}
-                        setActiveCell = {setActiveCell}
-                        pointTypes = {pointTypes}
-                    />
-                );
+            if (pointType) {
+                map.set(key, pointType)
             }
-        })),
+        })
 
-    ], [seasonHook.episodes, pointTypes, pointsMap, setPointsMap]);
+        setPointsMap(map)
+    }
 
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-    });
+    const handleSeasonChange = async (season) => {
+        setLoading(true)
 
-    const loadPointTypes = async () => {
+        setSelectedSeason(season)
+        setDropdownOpen(false)
+        setEpisodes(seasonsMap.get(season) ?? [])
+
         try {
-            setLoading(true)
-            const res= await pointTypeService.getPointTypes()
-            setPointTypes(res)
-        } catch (err) {
-            setError(err.message)
+            await Promise.all([
+                fetchQueens(season),
+                fetchPPE(season)
+            ])
+        } catch (error) {
+            console.error('Error loading queens:', error)
         } finally {
             setLoading(false)
         }
-    }   
-    const loadRanking = async () => {
-        try {
-            const rows = await ppeService.getRanking(CLIENT_ID, seasonSelected.id)
+    }
 
-            const map = new Map();
-            rows.forEach(row => {
+    const calculateScore = (queenId) => {
 
-                const point = pointTypes.find(
-                    p => p.id === row.point_type_id
-                );
-                map.set(
-                    `${row.queen_id}|${row.episode_id}`,
-                    point
-                );
-            });
+        let totalScore = 0
+        let totalEpisodes = 0
+        for (const [currentKey, point] of pointsMap) {
+            
+            const currentQueenId = currentKey.split('|')[0]
 
-            setPointsMap(map);
-            setOriginalPointsMap(new Map(map));
-        } catch (err) {
-            setError(err.message)
-        } finally {
-            setLoading(false)
+            if (currentQueenId === queenId) {
+                totalScore += point.value 
+                totalEpisodes++
+            }
         }
+
+        return totalEpisodes > 0 ? (totalScore / totalEpisodes).toFixed(3) : 0.000
     }
 
     const saveRanking = async () => {
-        try {
-            const rows = [];
-            pointsMap.forEach((point, key) => {
+        const rows = queens.flatMap(queen =>
+            episodes.map(episode => {
+                const key = `${queen.queen.id}|${episode.id}`
+                const point = pointsMap.get(key)
 
-                const [queenId, episodeId] = key.split("|");
-
-                rows.push({
-                    client_id: CLIENT_ID,
-                    queen_id: queenId,
-                    season_id: seasonSelected.id,
-                    episode_id: episodeId,
-                    point_type_id: point.id
-                });
-
-            });
-            
-            const rowsToDelete = [];
-
-            originalPointsMap.forEach((point, key) => {
-
-                if (!pointsMap.has(key)) {
-
-                    const [queenId, episodeId] = key.split("|");
-
-                    rowsToDelete.push({
-                        client_id: CLIENT_ID,
-                        queen_id: queenId,
-                        season_id: seasonSelected.id,
-                        episode_id: episodeId
-                    });
+                return {
+                    queen_id: queen.queen.id,
+                    episode_id: episode.id,
+                    point_type_id: point?.id ?? null
                 }
+            })
+        )
 
-            });
+        await ppeService.saveRanking(
+            selectedSeason.id,
+            rows
+        )
+        alert("Ranking guardado correctamente")
+    }
 
-            ppeService.saveRanking(rows, rowsToDelete)
-        } catch (err) {
-            setError(err.message)
-        } finally {
-            setLoading(false)
+    const rankedQueens = [...queens]
+        .map(queen => ({
+            ...queen,
+            score: calculateScore(queen.queen.id)
+        }))
+        .sort((a, b) => b.score - a.score)
+
+    const getPosition = (index) => {
+        if (index === 0) return 1
+
+        const currentScore = rankedQueens[index].score
+        const previousScore = rankedQueens[index - 1].score
+
+        if (currentScore === previousScore) {
+            return getPosition(index - 1)
         }
+
+        return index + 1
     }
 
     useEffect(() => {
-        loadPointTypes()
+        const loadData = async () => {
+            setLoading(true)
+
+            try {
+                await Promise.all([
+                    fetchSeasons(),
+                    fetchPointTypes()
+                ])
+            } catch (error) {
+                console.error('Error loading ranking:', error)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        loadData()
     }, [])
 
-    useEffect(() => {
-        if (!seasonSelected.id) return;
-        if (!pointTypes.length) return;
-
-        loadRanking();
-    }, [seasonSelected, pointTypes]);
-
-    useEffect(() => {
-        const slider = tableRef.current;
-        if (!slider || activeCell) return;
-
-        let isDragging = false;
-        let startX = 0;
-        let startY = 0;
-        let startScrollLeft = 0;
-        let startScrollTop = 0;
-
-        const handleMouseDown = (e) => {
-            if (e.target.closest("select, input")) return;
-
-            isDragging = true;
-            slider.classList.add(styles.dragging);
-
-            startX = e.clientX;
-            startY = e.clientY;
-
-            startScrollLeft = slider.scrollLeft;
-            startScrollTop = slider.scrollTop;
-        };
-
-        const handleMouseMove = (e) => {
-            if (!isDragging) return;
-
-            e.preventDefault();
-
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-
-            slider.scrollLeft = startScrollLeft - dx;
-            slider.scrollTop = startScrollTop - dy;
-        };
-
-        const stopDragging = () => {
-            isDragging = false;
-            slider.classList.remove(styles.dragging);
-        };
-
-        slider.addEventListener("mousedown", handleMouseDown);
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", stopDragging);
-
-        return () => {
-            slider.removeEventListener("mousedown", handleMouseDown);
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mouseup", stopDragging);
-        };
-    }, [activeCell]);
-
     return (
-        <div>
-            <div>
-                <Link href="/" className={styles.buttonLink}>
-                    Home
-                </Link>
-                <Dropdown   seasonSelected={seasonSelected} 
-                        onSeasonChange={setSeasonSelected}
-                        seasonHook = {seasonHook}
-                        queensHook = {queensHook}
-                />
-                <button className={styles.buttonLink}
-                        onClick={saveRanking}
-                > 
-                    Save Ranking
+        <div className={styles.pageContent}>
+
+            {loading && (
+                <div className={styles.loadingOverlay}>
+                    <div className={styles.loadingSpinner}></div>
+                    <span>Cargando...</span>
+                </div>
+            )}
+
+            <div className={styles.selector}>
+                <button
+                    type="button"
+                    className={styles.selectorButton}
+                    onClick={() => setDropdownOpen(prev => !prev)}
+                >
+                    <span>
+                        {selectedSeason
+                            ? selectedSeason.name
+                            : 'Selecciona una temporada'}
+                    </span>
+
+                    <FaCaretDown
+                        className={`${styles.caret} ${
+                            dropdownOpen ? styles.caretOpen : ''
+                        }`}
+                    />
                 </button>
-                <button className={styles.buttonLink}
-                        onClick={loadRanking}
-                > 
-                    Load Ranking
-                </button>
+                <button
+                    type="button"
+                    className={styles.save}
+                    onClick={ async () => {
+                        await saveRanking()
+                    }}
+                >
+                    Guardar ranking
+                </button>          
+                {dropdownOpen && (
+                    <div className={styles.dropdown}>
+                        {Array.from(seasonsMap.keys()).map(season => (
+                            <button
+                                key={season.id}
+                                type="button"
+                                className={`${styles.dropdownItem} ${
+                                    selectedSeason?.id === season.id
+                                        ? styles.selected
+                                        : ''
+                                }`}
+                                onClick={() => handleSeasonChange(season)}
+                            >
+                                <span>{season.name}</span>
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
-            <div ref={tableRef} className={styles.tableContainer}>
-                <table className={styles.table}>
-                    <thead>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                        <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                const isNameColumn = header.column.id === "name";
 
-                                const isHighlighted =
-                                !activeCell ||
-                                isNameColumn ||
-                                header.column.id === `episode-${activeCell?.episodeId}`;
+            {selectedSeason && (
+                <div className={styles.tableContainer}>
+                    <table className={styles.rankingTable}>
+                        <thead>
+                            <tr>
+                                <th className={styles.queenHeader}></th>
 
-                                return (
+                                {episodes.map(episode => (
                                     <th
-                                        key={header.id}
-                                        className={`
-                                            ${styles.th}
-                                            ${isNameColumn ? styles.nameColumn : ""}
-                                            ${!isHighlighted ? styles.dimmed : ""}
-                                        `}
+                                        key={episode.id}
+                                        className={styles.episodeHeader}
                                     >
-                                        {flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
+                                        {episode.title}
                                     </th>
-                                );
-                            })}
-                        </tr>
-                        ))}
-                    </thead>
+                                ))}
+                            </tr>
+                        </thead>
 
-                    <tbody>
-                        {table.getRowModel().rows.map((row) => (
-                        <tr className={styles.tr} key={row.id}>
-                            {row.getVisibleCells().map((cell) => {
+                        <tbody>
+                            {rankedQueens.map((queen, index) => (
+                                <tr key={queen.queen.id}>
+                                    <td className={styles.queenCell}>
+                                        <div className={styles.queenContent}>
+                                            <span className={styles.queenPosition}>
+                                                {getPosition(index)}º
+                                            </span>
 
-                                const isNameColumn = cell.column.id === "name";
+                                            <img
+                                                src={queen.image_url}
+                                                alt={queen.queen.name}
+                                                className={styles.queenImage}
+                                                draggable={false}
+                                            />
 
-                                const isSelectedCell =
-                                    activeCell &&
-                                    row.original.id === activeCell.queenId &&
-                                    cell.column.id === `episode-${activeCell.episodeId}`;
+                                            <div className={styles.queenInfo}>
+                                                <span className={styles.queenName}>
+                                                    {queen.queen.name}
+                                                </span>
 
-                                const isQueenCell =
-                                    activeCell &&
-                                    isNameColumn &&
-                                    row.original.id === activeCell.queenId;
-
-                                const isHighlighted =
-                                    !activeCell ||
-                                    isSelectedCell ||
-                                    isQueenCell;
-
-                                return (
-                                    <td
-                                        key={cell.id}
-                                        className={`
-                                            ${styles.td}
-                                            ${isNameColumn ? styles.nameColumn : ""}
-                                            ${!isHighlighted ? styles.dimmed : ""}
-                                        `}
-                                    >
-                                        {flexRender(
-                                            cell.column.columnDef.cell,
-                                            cell.getContext()
-                                        )}
+                                                <span className={styles.queenScore}>
+                                                    {queen.score}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </td>
-                                );
-                            })}
-                        </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+
+                                    {episodes.map(episode => {
+                                        const key = `${queen.queen.id}|${episode.id}`
+
+                                        return (
+                                            <td
+                                                key={episode.id}
+                                                className={styles.scoreCell}
+                                            >
+                                                <RankingCell
+                                                    cellId={key}
+                                                    activeCell={activeCell}
+                                                    setActiveCell={setActiveCell}
+                                                    point={pointsMap.get(key)}
+                                                    pointTypes={pointTypes}
+                                                    setPoint={(point) => {
+                                                        setPointsMap(prev => {
+                                                            const copy = new Map(prev)
+
+                                                            if (point) {
+                                                                copy.set(key, point)
+                                                            } else {
+                                                                copy.delete(key)
+                                                            }
+
+                                                            return copy
+                                                        })
+                                                    }}
+                                                />
+                                            </td>
+                                        )
+                                    })}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
-    );
+    )
 }

@@ -20,11 +20,6 @@ export default function TestPage() {
     return (
         <div className={styles.container}>
             <h1 className={styles.title}>Test Supabase</h1>
-            <div>
-                  <Link href="/" className={styles.buttonPaginate}>
-                    Home
-                  </Link>
-                </div>
             <div className={styles.inputDiv}>
                 <input
                     name="name"

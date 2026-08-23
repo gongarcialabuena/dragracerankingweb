@@ -1,0 +1,127 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.card {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card h1 {
+    margin: 0 0 30px;
+    text-align: center;
+    font-size: 28px;
+}
+
+.card form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inputGroup label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.inputGroup input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.inputGroup input:focus {
+    border-color: #333;
+}
+
+.card button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #222;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.card button:hover {
+    background-color: #444;
+}
+
+.card button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.error {
+    margin: 0;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #ffe5e5;
+    color: #c00;
+    font-size: 14px;
+}
+
+.card > p {
+    margin: 25px 0 0;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+.card > p a {
+    color: #222;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.card > p a:hover {
+    text-decoration: underline;
+}
+
+.passwordContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.passwordContainer input {
+    padding-right: 80px;
+}
+
+.showPassword {
+    position: absolute;
+    right: 8px;
+    width: auto !important;
+    padding: 6px 8px !important;
+    background: transparent !important;
+    color: #555 !important;
+    font-size: 13px !important;
+}
+
+.showPassword:hover {
+    background: transparent !important;
+    color: #222 !important;
+}
