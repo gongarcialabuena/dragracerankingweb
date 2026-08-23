@@ -20,6 +20,7 @@ export default function SeasonsAdmin() {
     const [newEpisode, setNewEpisode] = useState(null)
     const [newSeason, setNewSeason] = useState(null)
     const [editSeason, setEditSeason] = useState(null)
+    const [seasonSearch, setSeasonSearch] = useState('')
 
     const fetchSeasons = async (selectSeason) => {
         try {
@@ -70,6 +71,10 @@ export default function SeasonsAdmin() {
     const selectedEpisodes = selectedSeason
         ? seasonsMap.get(selectedSeason)
         : []
+
+    const filteredSeasons = Array.from(seasonsMap.keys()).filter(season =>
+        season.name.toLowerCase().includes(seasonSearch.toLowerCase())
+    )
 
     return (
         <div className={styles.container}>
@@ -134,7 +139,17 @@ export default function SeasonsAdmin() {
                 {dropdownOpen && (
                     <div className={styles.dropdown}>
 
-                        {Array.from(seasonsMap.keys()).map(season => (
+                        <div className={styles.searchContainer}>
+                            <input
+                                type="text"
+                                placeholder="Buscar temporada..."
+                                value={seasonSearch}
+                                onChange={(e) => setSeasonSearch(e.target.value)}
+                                className={styles.searchInput}
+                            />
+                        </div>
+
+                        {filteredSeasons.map(season => (
                             <button
                                 key={season.id}
                                 type="button"
@@ -143,13 +158,20 @@ export default function SeasonsAdmin() {
                                         ? styles.selected
                                         : ''
                                 }`}
-                                onClick={() =>
+                                onClick={() => {
                                     handleSeasonChange(season)
-                                }
+                                    setSeasonSearch('')
+                                }}
                             >
                                 <span>{season.name}</span>
                             </button>
                         ))}
+
+                        {filteredSeasons.length === 0 && (
+                            <div className={styles.noResults}>
+                                No se encontraron temporadas
+                            </div>
+                        )}
 
                     </div>
                 )}

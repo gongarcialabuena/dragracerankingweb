@@ -19,6 +19,7 @@ export default function RankingPage() {
     const [pointsMap, setPointsMap] = useState(new Map())
     const [queens, setQueens] = useState([])
     const [loading, setLoading] = useState(true)
+    const [seasonSearch, setSeasonSearch] = useState('')
 
     const fetchSeasons = async () => {
         const map = await seasonService.getRankableSeasonsWithEpisodes()
@@ -135,6 +136,10 @@ export default function RankingPage() {
         return index + 1
     }
 
+    const filteredSeasons = Array.from(seasonsMap.keys()).filter(season =>
+        season.name.toLowerCase().includes(seasonSearch.toLowerCase())
+    )
+
     useEffect(() => {
         const loadData = async () => {
             setLoading(true)
@@ -193,7 +198,18 @@ export default function RankingPage() {
                 </button>          
                 {dropdownOpen && (
                     <div className={styles.dropdown}>
-                        {Array.from(seasonsMap.keys()).map(season => (
+
+                        <div className={styles.searchContainer}>
+                            <input
+                                type="text"
+                                placeholder="Buscar temporada..."
+                                value={seasonSearch}
+                                onChange={(e) => setSeasonSearch(e.target.value)}
+                                className={styles.searchInput}
+                            />
+                        </div>
+
+                        {filteredSeasons.map(season => (
                             <button
                                 key={season.id}
                                 type="button"
@@ -202,11 +218,21 @@ export default function RankingPage() {
                                         ? styles.selected
                                         : ''
                                 }`}
-                                onClick={() => handleSeasonChange(season)}
+                                onClick={() => {
+                                    handleSeasonChange(season)
+                                    setSeasonSearch('')
+                                }}
                             >
                                 <span>{season.name}</span>
                             </button>
                         ))}
+
+                        {filteredSeasons.length === 0 && (
+                            <div className={styles.noResults}>
+                                No se encontraron temporadas
+                            </div>
+                        )}
+
                     </div>
                 )}
             </div>

@@ -117,6 +117,33 @@
     font-weight: 600;
 }
 
+.searchContainer {
+    padding: 8px;
+    position: sticky;
+    top: 0;
+    background: white;
+}
+
+.searchInput {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+}
+
+.searchInput:focus {
+    border-color: #888;
+}
+
+.noResults {
+    padding: 10px;
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+}
+
 /* TABLA */
 
 .tableContainer {

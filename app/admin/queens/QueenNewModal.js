@@ -15,6 +15,7 @@ export default function QueenNewModal({
     const [dropdownOpen, setDropdownOpen] = useState(false)
     const [seasons, setSeasons] = useState([])
     const [imagePreview, setImagePreview] = useState(null)
+    const [seasonSearch, setSeasonSearch] = useState('')
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -27,17 +28,20 @@ export default function QueenNewModal({
         setDropdownOpen(false)
     }
     
+    const filteredSeasons = seasons.filter(season =>
+        season.name.toLowerCase().includes(seasonSearch.toLowerCase())
+    )
+
+    const fetchSeasons = async () => {
+        try {
+            const seasonList = await seasonService.getAllSeasons()
+            setSeasons(seasonList)
+        } catch (error) {
+            console.error('Error fetching queens list:', error)
+        } 
+    }
 
     useEffect(() => {
-        const fetchSeasons = async () => {
-            try {
-                const seasonList = await seasonService.getAllSeasons()
-                setSeasons(seasonList)
-            } catch (error) {
-                console.error('Error fetching queens list:', error)
-            } 
-        }
-
         fetchSeasons()
     }, [])
 
@@ -100,7 +104,17 @@ export default function QueenNewModal({
                         {dropdownOpen && (
                             <div className={styles.dropdown}>
 
-                                {seasons.map(season => (
+                                <div className={styles.searchContainer}>
+                                    <input
+                                        type="text"
+                                        placeholder="Buscar temporada..."
+                                        value={seasonSearch}
+                                        onChange={(e) => setSeasonSearch(e.target.value)}
+                                        className={styles.searchInput}
+                                    />
+                                </div>
+
+                                {filteredSeasons.map(season => (
                                     <button
                                         key={season.id}
                                         type="button"
@@ -109,13 +123,20 @@ export default function QueenNewModal({
                                                 ? styles.selected
                                                 : ''
                                         }`}
-                                        onClick={() =>
+                                        onClick={() => {
                                             handleSeasonChange(season)
-                                        }
+                                            setSeasonSearch('')
+                                        }}
                                     >
                                         <span>{season.name}</span>
                                     </button>
                                 ))}
+
+                                {filteredSeasons.length === 0 && (
+                                    <div className={styles.noResults}>
+                                        No se encontraron temporadas
+                                    </div>
+                                )}
 
                             </div>
                         )}
