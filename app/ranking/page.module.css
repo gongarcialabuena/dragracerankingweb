@@ -159,6 +159,7 @@
     min-width: 100%;
     table-layout: fixed;
     background-color: white;
+    color: #222;
 }
 
 .rankingTable th,
@@ -177,6 +178,7 @@
     max-width: 280px;
     height: 45px;
     background-color: #f3f3f3;
+    color: #222;
 }
 
 .queenCell {
@@ -189,6 +191,7 @@
     height: 70px;
     padding: 6px 10px;
     background-color: white;
+    color: #222;
 }
 
 .queenContent {
@@ -242,6 +245,7 @@
     height: 45px;
     padding: 8px;
     background-color: #f3f3f3;
+    color: #222;
     text-align: center;
     font-weight: 600;
 }
