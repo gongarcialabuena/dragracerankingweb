@@ -19,6 +19,7 @@ export async function GET(request) {
 
 
     if (dbError) {
+        console.error(dbError)
         return NextResponse.json(
             { error: dbError.message },
             { status: 500 }

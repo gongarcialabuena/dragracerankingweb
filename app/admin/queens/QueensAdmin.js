@@ -103,7 +103,7 @@ export default function QueensAdmin() {
                         <span>
                             {selectedSeason
                                 ? `${selectedSeason.name}`
-                                : 'Selecciona una temporada'
+                                : 'Filtrar por temporada'
                             }
                         </span>
 
@@ -177,15 +177,6 @@ export default function QueensAdmin() {
                     Añadir Reina
                 </button>
 
-                <button
-                    type="button"
-                    className={styles.addQueen}
-                    onClick={async () => {
-                        // Eliminar reina
-                    }}
-                >
-                    Eliminar Reina
-                </button>
             </div>
 
             <div className={styles.queensList}>

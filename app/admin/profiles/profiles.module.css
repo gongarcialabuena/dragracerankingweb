@@ -1,0 +1,183 @@
+.container {
+    width: 100%;
+}
+
+.container h2 {
+    margin-bottom: 1.5rem;
+}
+
+.profilesList {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+}
+
+.header,
+.profile {
+    display: grid;
+    grid-template-columns: 120px 1.2fr 2fr 150px 180px;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.2rem;
+}
+
+.header {
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+}
+
+.header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.header span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+}
+
+.header input,
+.header select {
+    width: 100%;
+    min-width: 0;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    font: inherit;
+    font-size: 0.85rem;
+    color: #333;
+    outline: none;
+}
+
+.header input:focus,
+.header select:focus {
+    border-color: #888;
+}
+
+.profile {
+    min-height: 55px;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+    color: #333;
+    transition: background-color 0.15s ease;
+}
+
+.profile:last-child {
+    border-bottom: none;
+}
+
+.profile:hover {
+    background-color: #fafafa;
+}
+
+.role {
+    width: fit-content;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: #eee;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.username {
+    font-weight: 500;
+}
+
+.date {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.loading,
+.empty {
+    padding: 2rem;
+    text-align: center;
+    color: #777;
+    margin: 0;
+}
+
+.clearFilters {
+    margin-top: 1rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+}
+
+.clearFilters:hover {
+    background: #f5f5f5;
+}
+
+@media (max-width: 700px) {
+    .profilesList {
+        overflow-x: auto;
+    }
+
+    .header,
+    .profile {
+        min-width: 850px;
+    }
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.actions button {
+    padding: 0.4rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.editButton:hover {
+    background: #f0f0f0;
+}
+
+.deleteButton {
+    color: #c62828;
+}
+
+.deleteButton:hover {
+    background: #fff0f0;
+}
+
+.saveButton {
+    color: #2e7d32;
+}
+
+.saveButton:hover {
+    background: #f0fff0;
+}
+
+.cancelButton:hover {
+    background: #f0f0f0;
+}
+
+.profile input,
+.profile select {
+    width: 100%;
+    min-width: 0;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    font: inherit;
+    outline: none;
+}
+
+.profile input:focus,
+.profile select:focus {
+    border-color: #888;
+}
